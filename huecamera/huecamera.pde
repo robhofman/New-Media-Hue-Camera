@@ -15,6 +15,8 @@ double[] xyVals;
 ArrayList<Integer> lamps = new ArrayList<Integer>();
 ArrayList<String> lampjezz = new ArrayList<String>();
 
+ArrayList<String> selectedLamps = new ArrayList<String>();
+
 
 String IP = "172.23.190.22";
 String dev = "nicolslavanda";
@@ -67,7 +69,7 @@ void draw() {
       //lamps.indexOf(6))
       //lamps.remove((Integer)6);
 
-        for(int i : lamps){
+        for(int i : selectedLamps){
           stuurKleurdoor(cam, i);
           println("Lamp aangestuurd: "+i);
         }
