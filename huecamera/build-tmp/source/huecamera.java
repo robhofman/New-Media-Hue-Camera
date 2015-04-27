@@ -6,6 +6,7 @@ import processing.opengl.*;
 import processing.video.*; 
 import controlP5.*; 
 import java.awt.Color; 
+import java.util.*; 
 
 import org.apache.http.*; 
 import org.apache.http.impl.io.*; 
@@ -75,11 +76,10 @@ boolean counting= true;
 int avgColor;
 double[] xyVals;
 ArrayList<Integer> lamps = new ArrayList<Integer>();
+ArrayList<String> lampjezz = new ArrayList<String>();
 
 
-
-
-String IP = "172.23.190.21";
+String IP = "172.23.190.22";
 String dev = "nicolslavanda";
 DefaultHttpClient httpClient;
 
@@ -109,14 +109,15 @@ public void setup() {
   } else {
     println("Available cameras:");
     for (int i = 0; i < cameras.length; i++) {
-      println(cameras[i]);
+      //println(cameras[i]);
     }
     
     // The camera can be initialized directly using an 
     // element from the array returned by list():
     cam = new Capture(this, cameras[6]);
     cam.start();     
-  }      
+  }    
+  getLampen();  
 }
 
 
@@ -130,8 +131,8 @@ public void draw() {
       //lamps.remove((Integer)6);
 
         for(int i : lamps){
-          //stuurKleurdoor(cam, i);
-          println("test"+i);
+          stuurKleurdoor(cam, i);
+          println("Lamp aangestuurd: "+i);
         }
 
         time=millis();
@@ -366,6 +367,22 @@ public void stop(){
   httpClient.getConnectionManager().shutdown();
   super.stop();
 }
+
+
+public void getLampen()
+{
+  JSONObject jObject = loadJSONObject("http://"+IP+"/api/"+dev+"/lights");
+  Iterator x = jObject.keys().iterator();
+  while( x.hasNext() ) 
+  {
+    Integer key = Integer.parseInt(x.next().toString());
+    lamps.add(key);
+    println(key); 
+  }
+}
+
+
+
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "huecamera" };
     if (passedArgs != null) {
