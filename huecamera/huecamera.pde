@@ -2,6 +2,7 @@ import processing.video.*;
 import controlP5.*;
 import java.awt.Color;
 import java.util.*;
+//import org.apache.commons.lang.ArrayUtils;
 
 ControlP5 gui;
 
@@ -13,6 +14,7 @@ boolean counting= true;
 color avgColor;
 double[] xyVals;
 ArrayList<Integer> lamps = new ArrayList<Integer>();
+ArrayList<Integer> selectedLamps = new ArrayList<Integer>();
 CheckBox rb;
 Slider sl;
 String IP = "172.23.190.22";
@@ -38,8 +40,8 @@ void setup() {
               .setSpacingRow(20);
               for (int i = 0; i < lamps.size(); i++) 
               {
-                textFont(font, 32);
-                rb.addItem("lamp "+i, i);
+                //textFont(font, 32);
+                rb.addItem("lamp "+lamps.get(i), lamps.get(i));
               }
   sl = gui.addSlider("brightness")
             .setPosition(30, 470)
@@ -83,7 +85,7 @@ void draw() {
       //lamps.indexOf(6))
       //lamps.remove((Integer)6);
 
-        for(int i : lamps){
+        for(int i : selectedLamps){
           stuurKleurdoor(cam, i);
           println("Lamp aangestuurd: "+i);
         }
@@ -96,6 +98,7 @@ void draw() {
     }
 
   }
+  getSelectedLamps();
   image(cam, 0, 0);
 }
 
@@ -330,7 +333,28 @@ void getLampen()
   {
     Integer key = Integer.parseInt(x.next().toString());
     lamps.add(key);
-    println(key); 
+    //println(key); 
+  }
+}
+
+void getSelectedLamps()
+{
+  for (int i = 0; i < rb.getItems().size(); i++) 
+  {
+    String l = rb.getItem(i).toString();
+    String lampje = l.substring(5, 6);
+    if(rb.getState(i))
+    {     
+      if(!selectedLamps.contains(Integer.parseInt(lampje)))
+      {
+        selectedLamps.add(Integer.parseInt(lampje));
+      }
+      
+    }
+    else
+    {      
+      selectedLamps.remove((Object)Integer.parseInt(lampje));
+    }
   }
 }
 

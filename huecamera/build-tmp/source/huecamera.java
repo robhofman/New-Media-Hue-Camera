@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.util.*; 
 
 import org.apache.http.*; 
+import org.apache.commons.lang3.text.translate.*; 
+import org.apache.commons.lang3.time.*; 
 import org.apache.http.impl.io.*; 
 import org.apache.http.client.params.*; 
 import org.apache.http.impl.client.*; 
@@ -21,9 +23,13 @@ import org.apache.http.protocol.*;
 import org.apache.http.cookie.params.*; 
 import org.apache.http.entity.*; 
 import org.apache.http.auth.*; 
+import org.apache.commons.lang3.mutable.*; 
+import org.apache.commons.lang3.concurrent.*; 
 import org.apache.http.client.entity.*; 
 import org.apache.http.conn.socket.*; 
 import org.apache.http.conn.params.*; 
+import org.apache.commons.lang3.event.*; 
+import org.apache.commons.lang3.tuple.*; 
 import org.apache.http.cookie.*; 
 import org.apache.http.conn.routing.*; 
 import org.apache.commons.logging.*; 
@@ -34,17 +40,23 @@ import org.apache.http.impl.entity.*;
 import org.apache.http.conn.util.*; 
 import org.apache.commons.logging.impl.*; 
 import org.apache.http.concurrent.*; 
+import org.apache.commons.lang3.builder.*; 
 import org.apache.http.conn.*; 
 import org.apache.http.client.config.*; 
 import org.apache.http.pool.*; 
 import org.apache.http.io.*; 
+import org.apache.commons.lang3.text.*; 
 import org.apache.http.client.*; 
-import org.apache.http.impl.conn.tsccm.*; 
+import org.apache.commons.lang3.math.*; 
 import org.apache.http.impl.*; 
+import org.apache.http.impl.conn.tsccm.*; 
 import org.apache.http.client.utils.*; 
+import org.apache.commons.lang3.*; 
 import org.apache.http.impl.cookie.*; 
+import org.apache.commons.lang3.reflect.*; 
 import org.apache.http.auth.params.*; 
 import org.apache.http.conn.ssl.*; 
+import org.apache.commons.lang3.exception.*; 
 import org.apache.http.params.*; 
 import org.apache.http.message.*; 
 import org.apache.http.impl.execchain.*; 
@@ -65,6 +77,7 @@ public class huecamera extends PApplet {
 
 
 
+//import org.apache.commons.lang.ArrayUtils;
 
 ControlP5 gui;
 
@@ -76,6 +89,7 @@ boolean counting= true;
 int avgColor;
 double[] xyVals;
 ArrayList<Integer> lamps = new ArrayList<Integer>();
+ArrayList<Integer> selectedLamps = new ArrayList<Integer>();
 CheckBox rb;
 Slider sl;
 String IP = "172.23.190.22";
@@ -101,8 +115,8 @@ public void setup() {
               .setSpacingRow(20);
               for (int i = 0; i < lamps.size(); i++) 
               {
-                textFont(font, 32);
-                rb.addItem("lamp "+i, i);
+                //textFont(font, 32);
+                rb.addItem("lamp "+lamps.get(i), lamps.get(i));
               }
   sl = gui.addSlider("brightness")
             .setPosition(30, 470)
@@ -146,7 +160,7 @@ public void draw() {
       //lamps.indexOf(6))
       //lamps.remove((Integer)6);
 
-        for(int i : lamps){
+        for(int i : selectedLamps){
           stuurKleurdoor(cam, i);
           println("Lamp aangestuurd: "+i);
         }
@@ -159,6 +173,7 @@ public void draw() {
     }
 
   }
+  getSelectedLamps();
   image(cam, 0, 0);
 }
 
@@ -393,7 +408,28 @@ public void getLampen()
   {
     Integer key = Integer.parseInt(x.next().toString());
     lamps.add(key);
-    println(key); 
+    //println(key); 
+  }
+}
+
+public void getSelectedLamps()
+{
+  for (int i = 0; i < rb.getItems().size(); i++) 
+  {
+    String l = rb.getItem(i).toString();
+    String lampje = l.substring(5, 6);
+    if(rb.getState(i))
+    {     
+      if(!selectedLamps.contains(Integer.parseInt(lampje)))
+      {
+        selectedLamps.add(Integer.parseInt(lampje));
+      }
+      
+    }
+    else
+    {      
+      selectedLamps.remove((Object)Integer.parseInt(lampje));
+    }
   }
 }
 
