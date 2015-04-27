@@ -13,22 +13,39 @@ boolean counting= true;
 color avgColor;
 double[] xyVals;
 ArrayList<Integer> lamps = new ArrayList<Integer>();
-ArrayList<String> lampjezz = new ArrayList<String>();
-
-
+CheckBox rb;
+Slider sl;
 String IP = "172.23.190.22";
 String dev = "nicolslavanda";
+
 DefaultHttpClient httpClient;
 
 
 void setup() {
 
   gui = new ControlP5(this);
+  getLampen();  
 
   b = gui.addButton("lockColor")
 	         .setPosition(550,150)
 	         .setSize(90,30)
 	         .setCaptionLabel("Lock/Unlock color");
+
+  rb = gui.addCheckBox("checkbox")
+              .setPosition(30, 230)
+              .setColorLabel(color(0))
+              .setSize(20, 20)
+              .setSpacingRow(20);
+              for (int i = 0; i < lamps.size(); i++) 
+              {
+                textFont(font, 32);
+                rb.addItem("lamp "+i, i);
+              }
+  sl = gui.addSlider("brightness")
+            .setPosition(30, 470)
+            .setSize(200, 20)
+            .setRange(0,100);   
+ 
 
   httpClient = new DefaultHttpClient();
   size(640, 600);
@@ -54,7 +71,6 @@ void setup() {
     cam = new Capture(this, cameras[6]);
     cam.start();     
   }    
-  getLampen();  
 }
 
 
