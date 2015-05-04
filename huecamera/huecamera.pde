@@ -46,7 +46,7 @@ void setup() {
   sl = gui.addSlider("brightness")
             .setPosition(30, 470)
             .setSize(200, 20)
-            .setRange(0,100);   
+            .setRange(0,255);   
  
 
   httpClient = new DefaultHttpClient();
@@ -102,12 +102,17 @@ void draw() {
   image(cam, 0, 0);
 }
 
+void brightness(){
+  //setBrightness();
+}
+
+
 void stuurKleurdoor(PImage img, int lamp){
   println("test");
   int[] hsb = getHSBhue(img);
   int hue = hsb[0];
   int sat = hsb[1];
-  int bright = hsb[2];
+  int bright = Math.round(sl.getValue());
 
   setColor(lamp, true, hue, sat, bright, 2);
 }
@@ -247,6 +252,7 @@ public int[] getHSBhue (PImage img){
 //formule uit demo lichtjes aangepast easy peasy
 void setColor(int lamp, boolean on, int hue, int sat, int bri, int trans){
   try {
+
     String data = "{\"on\":true, \"hue\":"+hue+", \"bri\":"+bri+", \"sat\":"+sat+", \"transitiontime\":"+trans+"}";
 
     StringEntity se = new StringEntity(data);
@@ -354,6 +360,32 @@ void getSelectedLamps()
     else
     {      
       selectedLamps.remove((Object)Integer.parseInt(lampje));
+    }
+  }
+}
+
+void setBrightness()
+{
+  if(!counting)
+  {
+    for(int i = 0; i<selectedLamps.size(); i++)
+    {
+      try{
+        Integer geselecteerdeLamp = selectedLamps.get(i);
+        float bri = sl.getValue();
+        String data = "{\"on\":true, \"bri\":"+bri+"}";
+        StringEntity se = new StringEntity(data);
+        HttpPut httpPut = new HttpPut("http://"+IP+"/api/"+dev+"/lights/"+geselecteerdeLamp+"/state");
+
+        httpPut.setEntity(se);
+
+        HttpResponse response = httpClient.execute(httpPut);
+        HttpEntity entity = response.getEntity();
+        if (entity != null) entity.consumeContent();
+      }
+      catch(Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 }
